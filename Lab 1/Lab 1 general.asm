@@ -322,9 +322,9 @@ disp_6:
 	mov HEX5, #L_c
 	mov HEX4, #L_p
 	mov HEX3, #L_n
-	mov HEX2, #L_3
-	mov HEX1, #L_1
-	mov HEX0, #L_2
+	mov HEX2, #n3
+	mov HEX1, #n1
+	mov HEX0, #n2
 	lcall wait_05
 	LJMP main_loop
 
