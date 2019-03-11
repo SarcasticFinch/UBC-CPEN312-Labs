@@ -171,7 +171,7 @@
 0000             23   L_n equ 01001000b ;N
 0000             24   ; ------------------
 0000             25   
-0000             26   ; Enter your SN here
+0000             26   ; Enter your SN here *WARNING DUPLICATED NUMBERS MAY NOT WORK COPY THE BINARY ABOVE IN THIS CASE*
 0000             27   L_1 equ n1
 0000             28   L_2 equ n2
 0000             29   L_3 equ n3
@@ -190,10 +190,10 @@
 0003             42   ; Wait function, waits for ~0.5 secs
 0003             43   wait_05:
 0003 7A5A        44       mov R2, #90  ; 90 is 5AH
-0005 79FA        45   L3: mov R1, #250 ; 250 is FAH 
+0005 7BFA        45   L3: mov R3, #250 ; 250 is FAH 
 0007 78FA        46   L2: mov R0, #250
 0009 D8FE        47   L1: djnz R0, L1  ; 3 machine cycles-> 3*30ns*250=22.5us
-000B D9FA        48       djnz R1, L2  ; 22.5us*250=5.625ms
+000B DBFA        48       djnz R3, L2  ; 22.5us*250=5.625ms
 000D DAF6        49       djnz R2, L3  ; 5.625ms*90=0.506s (approximately)
 000F 22          50            ret
 0010             51   
@@ -219,119 +219,265 @@
 0030 020087      71                            LJMP disp_2
 0033 80E4        72                            SJMP main_loop
 0035 B40305      73   disp_3l: cjne A, #00000011b, disp_4l
-0038 02008A      74                            LJMP disp_3
+0038 020106      74                            LJMP disp_3
 003B 80DC        75                            SJMP main_loop
 003D B40405      76   disp_4l: cjne A, #00000100b, disp_5l
-0040 02008D      77                            LJMP disp_4
+0040 020185      77                            LJMP disp_4
 0043 80D4        78                            SJMP main_loop
 0045 B40505      79   disp_5l: cjne A, #00000101b, disp_6l
-0048 0200BA      80                            LJMP disp_5
+0048 0201B2      80                            LJMP disp_5
 004B 80CC        81                            SJMP main_loop
 004D B40605      82   disp_6l: cjne A, #00000110b, disp_7l
-0050 0200F6      83                            LJMP disp_6
+0050 0201EE      83                            LJMP disp_6
 0053 80C4        84                            SJMP main_loop
 0055 B407C1      85   disp_7l: cjne A, #00000111b, main_loop
-0058 020138      86                            LJMP disp_7
+0058 020230      86                            LJMP disp_7
 005B 80BC        87                            SJMP main_loop
 005D             88   
-005D             89   
-005D             90   ; First 6 SN
-005D             91   disp_0:
-005D 758F79      92            mov HEX5, #L_1
-0060 758E24      93            mov HEX4, #L_2
-0063 759430      94            mov HEX3, #L_3
-0066 759319      95            mov HEX2, #L_4
-0069 759212      96            mov HEX1, #L_5
-006C 759102      97            mov HEX0, #L_6
-006F 020019      98            LJMP main_loop
-0072             99   
-0072            100   ; Last 2 SN
-0072            101   disp_1:
-0072 758F7F     102            mov HEX5, #BLANK
-0075 758E7F     103            mov HEX4, #BLANK
-0078 75947F     104            mov HEX3, #BLANK
-007B 75937F     105            mov HEX2, #BLANK
-007E 759278     106            mov HEX1, #L_7
-0081 759100     107            mov HEX0, #L_8
-0084 020019     108            LJMP main_loop
-0087            109   
-0087            110   ; Scroll to the left
-0087            111   disp_2:
-0087            112            ; Abuse pointers        
-0087 020019     113            LJMP main_loop
-008A            114   
-008A            115   ; Scroll to the right
-008A            116   disp_3:
-008A 020019     117            LJMP main_loop
-008D            118   
-008D            119   ;Blink last 6
-008D            120   disp_4:
-008D 758F30     121            mov HEX5, #L_3
-0090 758E19     122            mov HEX4, #L_4
-0093 759412     123            mov HEX3, #L_5
-0096 759302     124            mov HEX2, #L_6
-0099 759278     125            mov HEX1, #L_7
-009C 759100     126            mov HEX0, #L_8
-009F 120003     127            lcall wait_05
-00A2 758F7F     128            mov HEX5, #BLANK
-00A5 758E7F     129            mov HEX4, #BLANK
-00A8 75947F     130            mov HEX3, #BLANK
-00AB 75937F     131            mov HEX2, #BLANK
-00AE 75927F     132            mov HEX1, #BLANK
-00B1 75917F     133            mov HEX0, #BLANK
-00B4 120003     134            lcall wait_05
-00B7 020019     135            LJMP main_loop
-00BA            136   
-00BA            137   ;make first 6 display one at a time
-00BA            138   disp_5:
-00BA 758F7F     139            mov HEX5, #BLANK
-00BD 758E7F     140            mov HEX4, #BLANK
-00C0 75947F     141            mov HEX3, #BLANK
-00C3 75937F     142            mov HEX2, #BLANK
-00C6 75927F     143            mov HEX1, #BLANK
-00C9 75917F     144            mov HEX0, #BLANK
-00CC 120003     145            lcall wait_05
-00CF 758F79     146            mov HEX5, #L_1
-00D2 120003     147            lcall wait_05
-00D5 758E24     148            mov HEX4, #L_2
-00D8 120003     149            lcall wait_05
-00DB 759430     150            mov HEX3, #L_3
-00DE 120003     151            lcall wait_05
-00E1 759319     152            mov HEX2, #L_4
-00E4 120003     153            lcall wait_05
-00E7 759212     154            mov HEX1, #L_5
-00EA 120003     155            lcall wait_05
-00ED 759102     156            mov HEX0, #L_6
-00F0 120003     157            lcall wait_05
-00F3 020019     158            LJMP main_loop
-00F6            159   
-00F6            160   ; display hello, then first 6, then cpn312
-00F6            161   disp_6:
-00F6 758F09     162            mov HEX5, #L_h
-00F9 758E06     163            mov HEX4, #L_e
-00FC 759447     164            mov HEX3, #L_l
-00FF 759347     165            mov HEX2, #L_l
-0102 759240     166            mov HEX1, #n0
-0105 75917F     167            mov HEX0, #BLANK
-0108 120003     168            lcall wait_05
-010B 758F79     169            mov HEX5, #L_1
-010E 758E24     170            mov HEX4, #L_2
-0111 759430     171            mov HEX3, #L_3
-0114 759319     172            mov HEX2, #L_4
-0117 759212     173            mov HEX1, #L_5
-011A 759102     174            mov HEX0, #L_6
-011D 120003     175            lcall wait_05
-0120 758F46     176            mov HEX5, #L_c
-0123 758E0C     177            mov HEX4, #L_p
-0126 759448     178            mov HEX3, #L_n
-0129 759330     179            mov HEX2, #L_3
-012C 759279     180            mov HEX1, #L_1
-012F 759124     181            mov HEX0, #L_2
-0132 120003     182            lcall wait_05
-0135 020019     183            LJMP main_loop
-0138            184   
-0138            185   ; Be creative
-0138            186   disp_7:
-0138 020019     187            LJMP main_loop
-013B            188   
-013B            189   EN
+005D             89   ; First 6 SN
+005D             90   disp_0:
+005D 758F79      91            mov HEX5, #L_1
+0060 758E24      92            mov HEX4, #L_2
+0063 759430      93            mov HEX3, #L_3
+0066 759319      94            mov HEX2, #L_4
+0069 759212      95            mov HEX1, #L_5
+006C 759102      96            mov HEX0, #L_6
+006F 020019      97            LJMP main_loop
+0072             98   
+0072             99   ; Last 2 SN
+0072            100   disp_1:
+0072 758F7F     101            mov HEX5, #BLANK
+0075 758E7F     102            mov HEX4, #BLANK
+0078 75947F     103            mov HEX3, #BLANK
+007B 75937F     104            mov HEX2, #BLANK
+007E 759278     105            mov HEX1, #L_7
+0081 759100     106            mov HEX0, #L_8
+0084 020019     107            LJMP main_loop
+0087            108   
+0087            109   ; Scroll to the left
+0087            110   disp_2:
+0087            111            ;Assign 8SNs to RAM Addresses 40H to 47H
+0087 7940       112            mov R1, #40H ;SN1
+0089 7779       113            mov @R1, #L_1
+008B 7941       114            mov R1, #41H ;SN2
+008D 7724       115            mov @R1, #L_2
+008F 7942       116            mov R1, #42H ;SN3
+0091 7730       117            mov @R1, #L_3
+0093 7943       118            mov R1, #43H ;SN4
+0095 7719       119            mov @R1, #L_4
+0097 7944       120            mov R1, #44H ;SN5
+0099 7712       121            mov @R1, #L_5
+009B 7945       122            mov R1, #45H ;SN6
+009D 7702       123            mov @R1, #L_6
+009F 7946       124            mov R1, #46H ;SN7
+00A1 7778       125            mov @R1, #L_7
+00A3 7947       126            mov R1, #47H ;SN8
+00A5 7700       127            mov @R1, #L_8
+00A7            128            ;Set R1 to first address (40H)
+00A7 7940       129            mov R1, #40H
+00A9            130            Assign_loop_lef:
+00A9 B94802     131                    cjne R1, #48H, lef0;Compare if its at the end of addresses if so reset R1 to first address and keep putting values in
+00AC 7940       132                            mov R1, #40H
+00AE 878F       133                    lef0:   mov HEX5, @R1   ;Assign Hex0 to R1 value
+00B0 09         134                            inc R1                          ;increment R1 address
+00B1            135                    
+00B1 B94802     136                    cjne R1, #48H, lef1
+00B4 7940       137                            mov R1, #40H
+00B6 878E       138                    lef1: mov HEX4, @R1
+00B8 09         139                            inc R1
+00B9            140                    
+00B9 B94802     141                    cjne R1, #48H, lef2
+00BC 7940       142                            mov R1, #40H
+00BE 8794       143                    lef2: mov HEX3, @R1
+00C0 09         144                            inc R1
+00C1            145                    
+00C1 B94802     146                    cjne R1, #48H, lef3
+00C4 7940       147                            mov R1, #40H
+00C6 8793       148                    lef3: mov HEX2, @R1 
+00C8 09         149                            inc R1
+00C9            150                    
+00C9 B94802     151                    cjne R1, #48H, lef4
+00CC 7940       152                            mov R1, #40H
+00CE 8792       153                    lef4: mov HEX1, @R1 
+00D0 09         154                            inc R1
+00D1            155                    
+00D1 B94802     156                    cjne R1, #48H, lef5
+00D4 7940       157                            mov R1, #40H
+00D6 8791       158                    lef5: mov HEX0, @R1 
+00D8 09         159                            inc R1
+00D9            160                            
+00D9 E5E8       161                    mov A, SWA              ;Check if switch state changed, if so return to the main loop
+00DB 5407       162                    anl A, #00000111b
+00DD B40223     163                    cjne A, #00000010b, exit_lef ;Before moving to next state, pause, and subtract 5 from address
+00E0 120003     164                            lcall wait_05            ;eg R1 before = 40H, after equals 46H, sub 5 = 41H
+00E3            165                            
+00E3 B94002     166                                    cjne R1, #40H, lef6
+00E6 7948       167                                            mov R1, #48H
+00E8 19         168                                    lef6: dec R1
+00E9 B94002     169                                    cjne R1, #40H, lef7
+00EC 7948       170                                            mov R1, #48H
+00EE 19         171                                    lef7: dec R1
+00EF B94002     172                                    cjne R1, #40H, lef8
+00F2 7948       173                                            mov R1, #48H
+00F4 19         174                                    lef8: dec R1
+00F5 B94002     175                                    cjne R1, #40H, lef9
+00F8 7948       176                                            mov R1, #48H
+00FA 19         177                                    lef9: dec R1
+00FB B94002     178                                    cjne R1, #40H, lef10
+00FE 7948       179                                            mov R1, #48H
+0100 19         180                                    lef10: dec R1
+0101            181                            
+0101 80A6       182                            SJMP Assign_loop_lef
+0103            183                            
+0103            184            exit_lef:
+0103 020019     185            LJMP main_loop
+0106            186   
+0106            187   ; Scroll to the right
+0106            188   disp_3:
+0106            189            ;Assign 8SNs to RAM Addresses 40H to 47H
+0106 7940       190            mov R1, #40H ;SN8
+0108 7700       191            mov @R1, #L_8
+010A 7941       192            mov R1, #41H ;SN7
+010C 7778       193            mov @R1, #L_7
+010E 7942       194            mov R1, #42H ;SN6
+0110 7702       195            mov @R1, #L_6
+0112 7943       196            mov R1, #43H ;SN5
+0114 7712       197            mov @R1, #L_5
+0116 7944       198            mov R1, #44H ;SN4
+0118 7719       199            mov @R1, #L_4
+011A 7945       200            mov R1, #45H ;SN3
+011C 7730       201            mov @R1, #L_3
+011E 7946       202            mov R1, #46H ;SN2
+0120 7724       203            mov @R1, #L_2
+0122 7947       204            mov R1, #47H ;SN1
+0124 7779       205            mov @R1, #L_1
+0126            206            ;Set R1 to first address (40H)
+0126 7940       207            mov R1, #40H
+0128            208            Assign_loop_rig:
+0128 B94802     209                    cjne R1, #48H, rig0;Compare if its at the end of addresses if so reset R1 to first address and keep putting values in
+012B 7940       210                            mov R1, #40H
+012D 8791       211                    rig0:   mov HEX0, @R1   ;Assign Hex0 to R1 value
+012F 09         212                            inc R1                          ;increment R1 address
+0130            213                    
+0130 B94802     214                    cjne R1, #48H, rig1
+0133 7940       215                            mov R1, #40H
+0135 8792       216                    rig1: mov HEX1, @R1
+0137 09         217                            inc R1
+0138            218                    
+0138 B94802     219                    cjne R1, #48H, rig2
+013B 7940       220                            mov R1, #40H
+013D 8793       221                    rig2: mov HEX2, @R1
+013F 09         222                            inc R1
+0140            223                    
+0140 B94802     224                    cjne R1, #48H, rig3
+0143 7940       225                            mov R1, #40H
+0145 8794       226                    rig3: mov HEX3, @R1 
+0147 09         227                            inc R1
+0148            228                    
+0148 B94802     229                    cjne R1, #48H, rig4
+014B 7940       230                            mov R1, #40H
+014D 878E       231                    rig4: mov HEX4, @R1 
+014F 09         232                            inc R1
+0150            233                    
+0150 B94802     234                    cjne R1, #48H, rig5
+0153 7940       235                            mov R1, #40H
+0155 878F       236                    rig5: mov HEX5, @R1 
+0157 09         237                            inc R1
+0158            238                            
+0158 E5E8       239                    mov A, SWA              ;Check if switch state changed, if so return to the main loop
+015A 5407       240                    anl A, #00000111b
+015C B40323     241                    cjne A, #00000011b, exit_rig ;Before moving to next state, pause, and subtract 5 from address
+015F 120003     242                            lcall wait_05            ;eg R1 before = 40H, after equals 46H, sub 5 = 41H
+0162            243                            
+0162 B94002     244                                    cjne R1, #40H, rig6
+0165 7948       245                                            mov R1, #48H
+0167 19         246                                    rig6: dec R1
+0168 B94002     247                                    cjne R1, #40H, rig7
+016B 7948       248                                            mov R1, #48H
+016D 19         249                                    rig7: dec R1
+016E B94002     250                                    cjne R1, #40H, rig8
+0171 7948       251                                            mov R1, #48H
+0173 19         252                                    rig8: dec R1
+0174 B94002     253                                    cjne R1, #40H, rig9
+0177 7948       254                                            mov R1, #48H
+0179 19         255                                    rig9: dec R1
+017A B94002     256                                    cjne R1, #40H, rig10
+017D 7948       257                                            mov R1, #48H
+017F 19         258                                    rig10: dec R1
+0180            259                            
+0180 80A6       260                            SJMP Assign_loop_rig
+0182            261                            
+0182            262            exit_rig:
+0182 020019     263            LJMP main_loop
+0185            264   
+0185            265   ;Blink last 6
+0185            266   disp_4:
+0185 758F30     267            mov HEX5, #L_3
+0188 758E19     268            mov HEX4, #L_4
+018B 759412     269            mov HEX3, #L_5
+018E 759302     270            mov HEX2, #L_6
+0191 759278     271            mov HEX1, #L_7
+0194 759100     272            mov HEX0, #L_8
+0197 120003     273            lcall wait_05
+019A 758F7F     274            mov HEX5, #BLANK
+019D 758E7F     275            mov HEX4, #BLANK
+01A0 75947F     276            mov HEX3, #BLANK
+01A3 75937F     277            mov HEX2, #BLANK
+01A6 75927F     278            mov HEX1, #BLANK
+01A9 75917F     279            mov HEX0, #BLANK
+01AC 120003     280            lcall wait_05
+01AF 020019     281            LJMP main_loop
+01B2            282   
+01B2            283   ;make first 6 display one at a time
+01B2            284   disp_5:
+01B2 758F7F     285            mov HEX5, #BLANK
+01B5 758E7F     286            mov HEX4, #BLANK
+01B8 75947F     287            mov HEX3, #BLANK
+01BB 75937F     288            mov HEX2, #BLANK
+01BE 75927F     289            mov HEX1, #BLANK
+01C1 75917F     290            mov HEX0, #BLANK
+01C4 120003     291            lcall wait_05
+01C7 758F79     292            mov HEX5, #L_1
+01CA 120003     293            lcall wait_05
+01CD 758E24     294            mov HEX4, #L_2
+01D0 120003     295            lcall wait_05
+01D3 759430     296            mov HEX3, #L_3
+01D6 120003     297            lcall wait_05
+01D9 759319     298            mov HEX2, #L_4
+01DC 120003     299            lcall wait_05
+01DF 759212     300            mov HEX1, #L_5
+01E2 120003     301            lcall wait_05
+01E5 759102     302            mov HEX0, #L_6
+01E8 120003     303            lcall wait_05
+01EB 020019     304            LJMP main_loop
+01EE            305   
+01EE            306   ; display hello, then first 6, then cpn312
+01EE            307   disp_6:
+01EE 758F09     308            mov HEX5, #L_h
+01F1 758E06     309            mov HEX4, #L_e
+01F4 759447     310            mov HEX3, #L_l
+01F7 759347     311            mov HEX2, #L_l
+01FA 759240     312            mov HEX1, #n0
+01FD 75917F     313            mov HEX0, #BLANK
+0200 120003     314            lcall wait_05
+0203 758F79     315            mov HEX5, #L_1
+0206 758E24     316            mov HEX4, #L_2
+0209 759430     317            mov HEX3, #L_3
+020C 759319     318            mov HEX2, #L_4
+020F 759212     319            mov HEX1, #L_5
+0212 759102     320            mov HEX0, #L_6
+0215 120003     321            lcall wait_05
+0218 758F46     322            mov HEX5, #L_c
+021B 758E0C     323            mov HEX4, #L_p
+021E 759448     324            mov HEX3, #L_n
+0221 759330     325            mov HEX2, #L_3
+0224 759279     326            mov HEX1, #L_1
+0227 759124     327            mov HEX0, #L_2
+022A 120003     328            lcall wait_05
+022D 020019     329            LJMP main_loop
+0230            330   
+0230            331   ; Be creative
+0230            332   disp_7:
+0230 020019     333            LJMP main_loop
+0233            334   
+0233            335   EN

@@ -23,7 +23,7 @@ L_p equ 00001100b ;P
 L_n equ 01001000b ;N
 ; ------------------
 
-; Enter your SN here
+; Enter your SN here *WARNING DUPLICATED NUMBERS MAY NOT WORK COPY THE BINARY ABOVE IN THIS CASE*
 L_1 equ n1
 L_2 equ n2
 L_3 equ n3
@@ -42,10 +42,10 @@ org 0
 ; Wait function, waits for ~0.5 secs
 wait_05:
     mov R2, #90  ; 90 is 5AH
-L3: mov R1, #250 ; 250 is FAH 
+L3: mov R3, #250 ; 250 is FAH 
 L2: mov R0, #250
 L1: djnz R0, L1  ; 3 machine cycles-> 3*30ns*250=22.5us
-    djnz R1, L2  ; 22.5us*250=5.625ms
+    djnz R3, L2  ; 22.5us*250=5.625ms
     djnz R2, L3  ; 5.625ms*90=0.506s (approximately)
 	ret
 
@@ -108,29 +108,158 @@ disp_1:
 
 ; Scroll to the left
 disp_2:
-	; Abuse pointers
-	
-	;Assign 8SNs to 8 sequential addresses in memory
-		;mov @R0 SN
-		;increment R0
-		;repeat
-	
-	;Set R0 to first address
-	;Loop
-		;Assign Hex to R0 value
-			;mov HEX0 @R0
-		;increment R0 address
-			;R0 + 1?
-		;Assign to next
-			;mov HEX1 @R0
-		;Repeat till all hex complete
-		;Compare if its at the end of addresses if so reset R0 to first address and loop back 
-		;if not at the end of all addresses increment one more time then loop back
-	
+	;Assign 8SNs to RAM Addresses 40H to 47H
+	mov R1, #40H ;SN1
+	mov @R1, #L_1
+	mov R1, #41H ;SN2
+	mov @R1, #L_2
+	mov R1, #42H ;SN3
+	mov @R1, #L_3
+	mov R1, #43H ;SN4
+	mov @R1, #L_4
+	mov R1, #44H ;SN5
+	mov @R1, #L_5
+	mov R1, #45H ;SN6
+	mov @R1, #L_6
+	mov R1, #46H ;SN7
+	mov @R1, #L_7
+	mov R1, #47H ;SN8
+	mov @R1, #L_8
+	;Set R1 to first address (40H)
+	mov R1, #40H
+	Assign_loop_lef:
+		cjne R1, #48H, lef0;Compare if its at the end of addresses if so reset R1 to first address and keep putting values in
+			mov R1, #40H
+		lef0:	mov HEX5, @R1 	;Assign Hex0 to R1 value
+			inc R1 			;increment R1 address
+		
+		cjne R1, #48H, lef1
+			mov R1, #40H
+		lef1: mov HEX4, @R1
+			inc R1
+		
+		cjne R1, #48H, lef2
+			mov R1, #40H
+		lef2: mov HEX3, @R1
+			inc R1
+		
+		cjne R1, #48H, lef3
+			mov R1, #40H
+		lef3: mov HEX2, @R1 
+			inc R1
+		
+		cjne R1, #48H, lef4
+			mov R1, #40H
+		lef4: mov HEX1, @R1 
+			inc R1
+		
+		cjne R1, #48H, lef5
+			mov R1, #40H
+		lef5: mov HEX0, @R1 
+			inc R1
+			
+		mov A, SWA 		;Check if switch state changed, if so return to the main loop
+		anl A, #00000111b
+		cjne A, #00000010b, exit_lef ;Before moving to next state, pause, and subtract 5 from address
+			lcall wait_05		 ;eg R1 before = 40H, after equals 46H, sub 5 = 41H
+			
+				cjne R1, #40H, lef6
+					mov R1, #48H
+				lef6: dec R1
+				cjne R1, #40H, lef7
+					mov R1, #48H
+				lef7: dec R1
+				cjne R1, #40H, lef8
+					mov R1, #48H
+				lef8: dec R1
+				cjne R1, #40H, lef9
+					mov R1, #48H
+				lef9: dec R1
+				cjne R1, #40H, lef10
+					mov R1, #48H
+				lef10: dec R1
+			
+			SJMP Assign_loop_lef
+			
+	exit_lef:
 	LJMP main_loop
 
 ; Scroll to the right
 disp_3:
+	;Assign 8SNs to RAM Addresses 40H to 47H
+	mov R1, #40H ;SN8
+	mov @R1, #L_8
+	mov R1, #41H ;SN7
+	mov @R1, #L_7
+	mov R1, #42H ;SN6
+	mov @R1, #L_6
+	mov R1, #43H ;SN5
+	mov @R1, #L_5
+	mov R1, #44H ;SN4
+	mov @R1, #L_4
+	mov R1, #45H ;SN3
+	mov @R1, #L_3
+	mov R1, #46H ;SN2
+	mov @R1, #L_2
+	mov R1, #47H ;SN1
+	mov @R1, #L_1
+	;Set R1 to first address (40H)
+	mov R1, #40H
+	Assign_loop_rig:
+		cjne R1, #48H, rig0;Compare if its at the end of addresses if so reset R1 to first address and keep putting values in
+			mov R1, #40H
+		rig0:	mov HEX0, @R1 	;Assign Hex0 to R1 value
+			inc R1 			;increment R1 address
+		
+		cjne R1, #48H, rig1
+			mov R1, #40H
+		rig1: mov HEX1, @R1
+			inc R1
+		
+		cjne R1, #48H, rig2
+			mov R1, #40H
+		rig2: mov HEX2, @R1
+			inc R1
+		
+		cjne R1, #48H, rig3
+			mov R1, #40H
+		rig3: mov HEX3, @R1 
+			inc R1
+		
+		cjne R1, #48H, rig4
+			mov R1, #40H
+		rig4: mov HEX4, @R1 
+			inc R1
+		
+		cjne R1, #48H, rig5
+			mov R1, #40H
+		rig5: mov HEX5, @R1 
+			inc R1
+			
+		mov A, SWA 		;Check if switch state changed, if so return to the main loop
+		anl A, #00000111b
+		cjne A, #00000011b, exit_rig ;Before moving to next state, pause, and subtract 5 from address
+			lcall wait_05		 ;eg R1 before = 40H, after equals 46H, sub 5 = 41H
+			
+				cjne R1, #40H, rig6
+					mov R1, #48H
+				rig6: dec R1
+				cjne R1, #40H, rig7
+					mov R1, #48H
+				rig7: dec R1
+				cjne R1, #40H, rig8
+					mov R1, #48H
+				rig8: dec R1
+				cjne R1, #40H, rig9
+					mov R1, #48H
+				rig9: dec R1
+				cjne R1, #40H, rig10
+					mov R1, #48H
+				rig10: dec R1
+			
+			SJMP Assign_loop_rig
+			
+	exit_rig:
 	LJMP main_loop
 
 ;Blink last 6
